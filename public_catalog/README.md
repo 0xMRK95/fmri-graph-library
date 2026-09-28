@@ -5,6 +5,17 @@ A link-only catalog generated from the private research warehouse.
 No article PDF, converted full text, abstract, or raw API response is included.
 Classification is machine-assisted and does not mean every entry has been manually verified.
 
+## Browse
+
+| View | Description |
+|---|---|
+| [By method](#browse-by-method) | Three methodological families |
+| [By publication year](by_year/README.md) | Year pages with method breakdowns |
+| [By publication venue](by_venue/README.md) | Alphabetical venue groups |
+| [By source link](by_source/README.md) | DOI, arXiv, PubMed/PMC, other, or pending |
+
+## Browse by method
+
 | Category | Papers |
 |---|---:|
 | [Graph and geometric deep learning](fmri_gnn.md) | 1,204 |

@@ -23,6 +23,14 @@ CATEGORIES = {
     "fmri_graph_classical": ("Classical graph analysis", "fmri_graph_classical.md"),
 }
 
+SOURCE_GROUPS = {
+    "doi": ("DOI", "doi.md"),
+    "arxiv": ("arXiv", "arxiv.md"),
+    "pubmed": ("PubMed or PMC", "pubmed-pmc.md"),
+    "other": ("Other stable source", "other.md"),
+    "pending": ("Source link pending", "pending.md"),
+}
+
 
 def _clean_text(value: object) -> str:
     """Keep untrusted paper metadata on a single, literal Markdown line."""
@@ -118,23 +126,227 @@ def _sort_key(paper: PaperRecord) -> tuple[bool, int, str, str]:
     return (year is None, -(year or 0), paper.title.casefold(), paper.canonical_id)
 
 
+def _paper_line(paper: PaperRecord, *, include_venue: bool = True) -> str:
+    title = _clean_text(paper.title)
+    venue = _clean_text(paper.venue) if include_venue else ""
+    suffix = f" — {venue}" if venue else ""
+    links = source_links(paper)
+    links_text = " · ".join(links) if links else "Source link pending"
+    description = f"{title}{suffix}"
+    punctuation = "" if description.endswith((".", "?", "!")) else "."
+    return f"- {description}{punctuation} {links_text}"
+
+
+def _all_papers(groups: dict[str, list[PaperRecord]]) -> list[PaperRecord]:
+    return [paper for category in CATEGORIES for paper in groups.get(category, [])]
+
+
 def render_category(category: str, papers: list[PaperRecord]) -> str:
     heading, _ = CATEGORIES[category]
-    lines = [GENERATED_MARKER, f"# {heading}", "", f"{len(papers):,} papers. Sorted by year, then title.", ""]
+    lines = [
+        GENERATED_MARKER,
+        f"# {heading}",
+        "",
+        "[← Catalog home](README.md)",
+        "",
+        f"{len(papers):,} papers. Sorted by year, then title.",
+        "",
+    ]
     years: dict[int | None, list[PaperRecord]] = defaultdict(list)
     for paper in sorted(papers, key=_sort_key):
         years[paper.year if isinstance(paper.year, int) else None].append(paper)
     for year, group in years.items():
         lines.extend([f"## {year if year is not None else 'Year unknown'}", ""])
         for paper in group:
-            title = _clean_text(paper.title)
-            venue = _clean_text(paper.venue)
-            suffix = f" — {venue}" if venue else ""
-            links = source_links(paper)
-            links_text = " · ".join(links) if links else "Source link pending"
-            description = f"{title}{suffix}"
-            punctuation = "" if description.endswith((".", "?", "!")) else "."
-            lines.append(f"- {description}{punctuation} {links_text}")
+            lines.append(_paper_line(paper))
+        lines.append("")
+    return "\n".join(lines)
+
+
+def _year_slug(year: int | None) -> str:
+    return f"{year}.md" if year is not None else "unknown.md"
+
+
+def render_year_index(groups: dict[str, list[PaperRecord]]) -> str:
+    by_year: dict[int | None, list[PaperRecord]] = defaultdict(list)
+    for paper in _all_papers(groups):
+        by_year[paper.year if isinstance(paper.year, int) else None].append(paper)
+    ordered = sorted((year for year in by_year if year is not None), reverse=True)
+    if None in by_year:
+        ordered.append(None)
+    lines = [
+        GENERATED_MARKER,
+        "# Browse by publication year",
+        "",
+        "[← Catalog home](../README.md)",
+        "",
+        "Each paper appears once, under its recorded publication year.",
+        "",
+        "| Year | All | Deep learning | Geometric / topology | Classical graph |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for year in ordered:
+        rows = by_year[year]
+        counts = defaultdict(int)
+        for paper in rows:
+            counts[paper.category] += 1
+        label = str(year) if year is not None else "Unknown"
+        lines.append(
+            f"| [{label}]({_year_slug(year)}) | {len(rows):,} | "
+            f"{counts['fmri_gnn']:,} | {counts['fmri_geometric_manifold']:,} | "
+            f"{counts['fmri_graph_classical']:,} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def render_year_page(year: int | None, papers: list[PaperRecord]) -> str:
+    label = str(year) if year is not None else "Year unknown"
+    lines = [
+        GENERATED_MARKER,
+        f"# {label}",
+        "",
+        "[← All years](README.md) · [Catalog home](../README.md)",
+        "",
+        f"{len(papers):,} papers.",
+        "",
+    ]
+    for category, (heading, _) in CATEGORIES.items():
+        category_papers = sorted(
+            (paper for paper in papers if paper.category == category), key=_sort_key
+        )
+        if not category_papers:
+            continue
+        lines.extend([f"## {heading} ({len(category_papers):,})", ""])
+        lines.extend(_paper_line(paper) for paper in category_papers)
+        lines.append("")
+    return "\n".join(lines)
+
+
+def _venue_name(paper: PaperRecord) -> str:
+    return re.sub(r"\s+", " ", (paper.venue or "").strip()) or "Unknown venue"
+
+
+def _venue_bucket(venue: str) -> str:
+    if venue == "Unknown venue":
+        return "unknown"
+    first = venue[0].upper()
+    if "A" <= first <= "Z":
+        return first.lower()
+    if first.isdigit():
+        return "0-9"
+    return "other"
+
+
+def _venue_bucket_label(bucket: str) -> str:
+    if len(bucket) == 1:
+        return bucket.upper()
+    return {"0-9": "0–9 / symbols", "other": "Other", "unknown": "Unknown"}[bucket]
+
+
+def render_venue_index(groups: dict[str, list[PaperRecord]]) -> str:
+    bucket_venues: dict[str, set[str]] = defaultdict(set)
+    bucket_papers: dict[str, int] = defaultdict(int)
+    for paper in _all_papers(groups):
+        venue = _venue_name(paper)
+        bucket = _venue_bucket(venue)
+        bucket_venues[bucket].add(venue)
+        bucket_papers[bucket] += 1
+    order = [chr(code) for code in range(ord("a"), ord("z") + 1)] + ["0-9", "other", "unknown"]
+    lines = [
+        GENERATED_MARKER,
+        "# Browse by publication venue",
+        "",
+        "[← Catalog home](../README.md)",
+        "",
+        "Venues are grouped alphabetically so the catalog stays compact.",
+        "",
+        "| Group | Venues | Papers |",
+        "|---|---:|---:|",
+    ]
+    for bucket in order:
+        if not bucket_papers[bucket]:
+            continue
+        label = _venue_bucket_label(bucket)
+        lines.append(
+            f"| [{label}]({bucket}.md) | {len(bucket_venues[bucket]):,} | "
+            f"{bucket_papers[bucket]:,} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def render_venue_page(bucket: str, papers: list[PaperRecord]) -> str:
+    title = _venue_bucket_label(bucket)
+    venues: dict[str, list[PaperRecord]] = defaultdict(list)
+    for paper in papers:
+        venues[_venue_name(paper)].append(paper)
+    lines = [
+        GENERATED_MARKER,
+        f"# Publication venues: {title}",
+        "",
+        "[← All venue groups](README.md) · [Catalog home](../README.md)",
+        "",
+        f"{len(venues):,} venues and {len(papers):,} papers.",
+        "",
+    ]
+    for venue in sorted(venues, key=str.casefold):
+        venue_papers = sorted(venues[venue], key=_sort_key)
+        lines.extend([f"## {_clean_text(venue)} ({len(venue_papers):,})", ""])
+        lines.extend(_paper_line(paper, include_venue=False) for paper in venue_papers)
+        lines.append("")
+    return "\n".join(lines)
+
+
+def _source_group(paper: PaperRecord) -> str:
+    links = source_links(paper)
+    if any(link.startswith("[DOI]") for link in links):
+        return "doi"
+    if any(link.startswith("[arXiv]") for link in links):
+        return "arxiv"
+    if any(link.startswith(("[PubMed]", "[PMC]")) for link in links):
+        return "pubmed"
+    return "other" if links else "pending"
+
+
+def render_source_index(groups: dict[str, list[PaperRecord]]) -> str:
+    counts = defaultdict(int)
+    for paper in _all_papers(groups):
+        counts[_source_group(paper)] += 1
+    lines = [
+        GENERATED_MARKER,
+        "# Browse by source link",
+        "",
+        "[← Catalog home](../README.md)",
+        "",
+        "Each paper is assigned to its best available stable source link.",
+        "",
+        "| Source | Papers |",
+        "|---|---:|",
+    ]
+    for group, (label, filename) in SOURCE_GROUPS.items():
+        lines.append(f"| [{label}]({filename}) | {counts[group]:,} |")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def render_source_page(group: str, papers: list[PaperRecord]) -> str:
+    label, _ = SOURCE_GROUPS[group]
+    lines = [
+        GENERATED_MARKER,
+        f"# Source: {label}",
+        "",
+        "[← Source groups](README.md) · [Catalog home](../README.md)",
+        "",
+        f"{len(papers):,} papers.",
+        "",
+    ]
+    years: dict[int | None, list[PaperRecord]] = defaultdict(list)
+    for paper in sorted(papers, key=_sort_key):
+        years[paper.year if isinstance(paper.year, int) else None].append(paper)
+    for year, year_papers in years.items():
+        lines.extend([f"## {year if year is not None else 'Year unknown'}", ""])
+        lines.extend(_paper_line(paper) for paper in year_papers)
         lines.append("")
     return "\n".join(lines)
 
@@ -147,6 +359,17 @@ def render_index(groups: dict[str, list[PaperRecord]]) -> str:
         "A link-only catalog generated from the private research warehouse.",
         "No article PDF, converted full text, abstract, or raw API response is included.",
         "Classification is machine-assisted and does not mean every entry has been manually verified.",
+        "",
+        "## Browse",
+        "",
+        "| View | Description |",
+        "|---|---|",
+        "| [By method](#browse-by-method) | Three methodological families |",
+        "| [By publication year](by_year/README.md) | Year pages with method breakdowns |",
+        "| [By publication venue](by_venue/README.md) | Alphabetical venue groups |",
+        "| [By source link](by_source/README.md) | DOI, arXiv, PubMed/PMC, other, or pending |",
+        "",
+        "## Browse by method",
         "",
         "| Category | Papers |",
         "|---|---:|",
@@ -170,8 +393,21 @@ def _write_generated(path: Path, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
+def _sync_generated_directory(path: Path, pages: dict[str, str]) -> None:
+    if path.exists():
+        for existing in path.glob("*.md"):
+            if not existing.read_text(encoding="utf-8").startswith(GENERATED_MARKER):
+                raise FileExistsError(f"refusing to remove a hand-edited file: {existing}")
+        for existing in path.glob("*.md"):
+            existing.unlink()
+    path.mkdir(parents=True, exist_ok=True)
+    for filename, content in pages.items():
+        _write_generated(path / filename, content)
+
+
 def build_catalog(client: Client, output_dir: Path) -> dict[str, int]:
     groups = collect_papers(client)
+    papers = _all_papers(groups)
     # Check all destinations before writing any file.
     targets = [output_dir / "README.md"] + [
         output_dir / filename for _, filename in CATEGORIES.values()
@@ -183,4 +419,34 @@ def build_catalog(client: Client, output_dir: Path) -> dict[str, int]:
     _write_generated(output_dir / "README.md", render_index(groups))
     for category, (_, filename) in CATEGORIES.items():
         _write_generated(output_dir / filename, render_category(category, groups[category]))
+
+    by_year: dict[int | None, list[PaperRecord]] = defaultdict(list)
+    by_venue_bucket: dict[str, list[PaperRecord]] = defaultdict(list)
+    by_source: dict[str, list[PaperRecord]] = defaultdict(list)
+    for paper in papers:
+        year = paper.year if isinstance(paper.year, int) else None
+        by_year[year].append(paper)
+        by_venue_bucket[_venue_bucket(_venue_name(paper))].append(paper)
+        by_source[_source_group(paper)].append(paper)
+
+    year_pages = {"README.md": render_year_index(groups)}
+    year_pages.update({
+        _year_slug(year): render_year_page(year, year_papers)
+        for year, year_papers in by_year.items()
+    })
+    _sync_generated_directory(output_dir / "by_year", year_pages)
+
+    venue_pages = {"README.md": render_venue_index(groups)}
+    venue_pages.update({
+        f"{bucket}.md": render_venue_page(bucket, venue_papers)
+        for bucket, venue_papers in by_venue_bucket.items()
+    })
+    _sync_generated_directory(output_dir / "by_venue", venue_pages)
+
+    source_pages = {"README.md": render_source_index(groups)}
+    source_pages.update({
+        filename: render_source_page(group, by_source.get(group, []))
+        for group, (_, filename) in SOURCE_GROUPS.items()
+    })
+    _sync_generated_directory(output_dir / "by_source", source_pages)
     return {category: len(groups[category]) for category in CATEGORIES}

@@ -7,6 +7,11 @@ geometric learning in functional MRI.
 
 **[Browse the current paper catalog](public_catalog/README.md)**
 
+Browse directly [by method](public_catalog/README.md#browse-by-method), [by
+publication year](public_catalog/by_year/README.md), [by publication
+venue](public_catalog/by_venue/README.md), or [by source
+link](public_catalog/by_source/README.md).
+
 The catalog contains 5,770 machine-screened, in-scope papers:
 
 | Area | Papers |
@@ -63,4 +68,3 @@ uv run python scripts/build_public_catalog.py \
 See [the methodology](docs/METHODOLOGY.md), [the reproducible
 workflow](docs/WORKFLOW.md), and [the publication
 boundary](docs/PUBLICATION_BOUNDARY.md) for details.
-

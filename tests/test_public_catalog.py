@@ -12,6 +12,7 @@ def paper(
     title: str,
     category: str = "fmri_gnn",
     year: int | None = 2025,
+    venue: str | None = None,
     identifiers: ExternalIds | None = None,
 ) -> PaperRecord:
     return PaperRecord(
@@ -19,6 +20,7 @@ def paper(
         title=title,
         category=category,
         year=year,
+        venue=venue,
         external_ids=identifiers or ExternalIds(),
         fulltext_path="/private/paper.pdf",
         abstract="Private abstract",
@@ -79,11 +81,53 @@ def test_build_catalog_writes_categories_and_preserves_hand_edited_files(tmp_pat
     counts = build_catalog(client, tmp_path / "catalog")
     assert counts["fmri_gnn"] == 1
     assert (tmp_path / "catalog" / "fmri_gnn.md").exists()
+    assert (tmp_path / "catalog" / "by_year" / "2025.md").exists()
+    assert (tmp_path / "catalog" / "by_venue" / "unknown.md").exists()
+    assert (tmp_path / "catalog" / "by_source" / "pending.md").exists()
     assert "1" in (tmp_path / "catalog" / "README.md").read_text()
     (tmp_path / "catalog" / "README.md").write_text("Human note")
     with pytest.raises(FileExistsError):
         build_catalog(client, tmp_path / "catalog")
     assert (tmp_path / "catalog" / "README.md").read_text() == "Human note"
+
+
+def test_catalog_builds_year_venue_and_source_views(tmp_path: Path) -> None:
+    records = [
+        paper(
+            "doi:10.1/recent",
+            "Recent graph paper",
+            year=2025,
+            venue="NeuroImage",
+            identifiers=ExternalIds(doi="10.1/recent"),
+        ),
+        paper(
+            "arxiv:2401.12345",
+            "Earlier geometric paper",
+            category="fmri_geometric_manifold",
+            year=2024,
+            venue="Medical Image Analysis",
+            identifiers=ExternalIds(arxiv="2401.12345"),
+        ),
+    ]
+    output = tmp_path / "catalog"
+    build_catalog(FakeClient(records), output)
+
+    index = (output / "README.md").read_text()
+    assert "by_year/README.md" in index
+    assert "by_venue/README.md" in index
+    assert "by_source/README.md" in index
+
+    year_index = (output / "by_year" / "README.md").read_text()
+    assert "[2025](2025.md)" in year_index
+    assert "[2024](2024.md)" in year_index
+    assert "Recent graph paper" in (output / "by_year" / "2025.md").read_text()
+
+    venue_index = (output / "by_venue" / "README.md").read_text()
+    assert "[N](n.md)" in venue_index
+    assert "NeuroImage" in (output / "by_venue" / "n.md").read_text()
+
+    assert "Recent graph paper" in (output / "by_source" / "doi.md").read_text()
+    assert "Earlier geometric paper" in (output / "by_source" / "arxiv.md").read_text()
 
 
 def test_seed_metadata_is_included_even_without_citation_discovery(tmp_path: Path) -> None:
