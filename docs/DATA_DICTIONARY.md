@@ -37,6 +37,8 @@ introduced by identifier reconciliation are removed.
 
 - `network.graphml` contains the same node and edge data for Gephi, Gephi Lite,
   Cytoscape, and NetworkX.
+- `network.gexf` is the presentation-ready view: it adds a deterministic layout,
+  method-family colors, degree-scaled node sizes, and subdued edge styling.
 - `network.cx` contains the same graph in NDEx CX format.
 - `stats.json` records release counts, component statistics, scope, and build
   timestamp.

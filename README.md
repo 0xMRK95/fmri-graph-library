@@ -38,6 +38,7 @@ as the paper library.
   private local warehouse.
 - `scripts/build_public_graph.py` — regenerates the catalog-induced graph.
 - `scripts/build_ndex_cx.py` — creates the NDEx-compatible CX release file.
+- `scripts/build_visualization.py` — creates the styled Gephi Lite view.
 - `tests/` — automated tests for the reusable code.
 - `docs/` — methodology, workflow, and publication-boundary documentation.
 
@@ -92,7 +93,7 @@ uv run python scripts/build_public_graph.py \
 
 - Browse all papers in the [public catalog](public_catalog/README.md).
 - Download the catalog-only graph from [public graph v1](public_graph/v1/README.md).
-- Open the public GraphML file in Gephi Lite from the project website.
+- Open the styled, pre-positioned GEXF view in Gephi Lite from the project website.
 - Create the NDEx upload file with `uv run --extra ndex python scripts/build_ndex_cx.py`.
 
 ## License
