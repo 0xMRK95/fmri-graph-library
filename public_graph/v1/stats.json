@@ -1,0 +1,20 @@
+{
+  "version": "v1",
+  "generated_at": "2026-09-28T13:29:49.753833+00:00",
+  "scope": "catalog-induced citation graph",
+  "nodes": 5770,
+  "edges": 36739,
+  "nodes_with_internal_edge": 5578,
+  "isolated_nodes": 192,
+  "self_loops_removed": 18,
+  "category_counts": {
+    "fmri_gnn": 1204,
+    "fmri_geometric_manifold": 405,
+    "fmri_graph_classical": 4161
+  },
+  "components": {
+    "total": 194,
+    "largest": 5576,
+    "isolated": 192
+  }
+}

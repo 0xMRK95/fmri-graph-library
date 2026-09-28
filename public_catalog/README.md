@@ -13,6 +13,7 @@ Classification is machine-assisted and does not mean every entry has been manual
 | [By publication year](by_year/README.md) | Year pages with method breakdowns |
 | [By publication venue](by_venue/README.md) | Alphabetical venue groups |
 | [By source link](by_source/README.md) | DOI, arXiv, PubMed/PMC, other, or pending |
+| [Citation graph](../public_graph/v1/README.md) | Version 1 induced by all catalog papers |
 
 ## Browse by method
 

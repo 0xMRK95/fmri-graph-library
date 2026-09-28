@@ -31,8 +31,10 @@ as the paper library.
 - `src/field_cartography/` — ingestion, identity resolution, citation expansion,
   corpus search, and read-only query APIs.
 - `public_catalog/` — the generated, reviewable bibliography.
+- `public_graph/v1/` — the first catalog-only citation-graph release.
 - `scripts/build_public_catalog.py` — regenerates the public catalog from a
   private local warehouse.
+- `scripts/build_public_graph.py` — regenerates the catalog-induced graph.
 - `tests/` — automated tests for the reusable code.
 - `docs/` — methodology, workflow, and publication-boundary documentation.
 
@@ -68,3 +70,16 @@ uv run python scripts/build_public_catalog.py \
 See [the methodology](docs/METHODOLOGY.md), [the reproducible
 workflow](docs/WORKFLOW.md), and [the publication
 boundary](docs/PUBLICATION_BOUNDARY.md) for details.
+
+## Regenerate the public graph
+
+Version 1 contains exactly the papers in the public catalog and only citations
+whose source and target are both catalog papers. Isolated catalog papers are
+retained.
+
+```bash
+uv run python scripts/build_public_graph.py \
+  --data-dir /path/to/private/data \
+  --output-dir public_graph/v1 \
+  --version v1
+```
