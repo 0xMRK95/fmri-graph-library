@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A searchable catalog and citation network for graph and geometric learning in functional MRI.">
+  <title>fMRI Graph Library</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav shell">
+    <a class="brand" href="index.html" aria-label="fMRI Graph Library home">
+      <span class="brand-mark" aria-hidden="true">ƒ</span>
+      <span>fMRI Graph Library</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="catalog.html">Catalog</a>
+      <a href="#graph">Graph</a>
+      <a href="https://github.com/0xMRK95/fmri-graph-library">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <p class="eyebrow">Open research infrastructure</p>
+      <h1>A map of graph-based<br>fMRI research.</h1>
+      <p class="lede">Browse 5,770 papers and explore the citation structure connecting graph learning, geometric methods, and classical network analysis in functional MRI.</p>
+      <div class="actions">
+        <a class="button primary" href="catalog.html">Search the catalog</a>
+        <a class="button secondary" href="https://lite.gephi.org/?file=https%3A%2F%2Fraw.githubusercontent.com%2F0xMRK95%2Ffmri-graph-library%2Fmain%2Fpublic_graph%2Fv1%2Fnetwork.graphml">Explore in Gephi Lite</a>
+      </div>
+    </section>
+
+    <section class="metrics shell" aria-label="Dataset summary">
+      <article><strong>5,770</strong><span>catalog papers</span></article>
+      <article><strong>36,739</strong><span>directed citations</span></article>
+      <article><strong>3</strong><span>method families</span></article>
+      <article><strong>2003–2026</strong><span>publication years</span></article>
+    </section>
+
+    <section class="section shell" id="graph">
+      <div class="section-heading">
+        <p class="eyebrow">Public graph · version 1</p>
+        <h2>Every catalog paper is a node.</h2>
+        <p>The graph is deliberately bounded: no out-of-scope citation-neighborhood records are included. Internal citations become directed edges, and 192 papers without an internal edge remain visible as isolates.</p>
+      </div>
+      <div class="format-grid">
+        <a class="format" href="data/network.graphml" download>
+          <span class="format-tag">GraphML</span>
+          <strong>Gephi, Cytoscape, NetworkX</strong>
+          <span>Download the interoperable graph</span>
+        </a>
+        <a class="format" href="data/network.cx" download>
+          <span class="format-tag">CX</span>
+          <strong>NDEx-ready network</strong>
+          <span>Download the exchange package</span>
+        </a>
+        <a class="format" href="data/nodes.csv" download>
+          <span class="format-tag">CSV</span>
+          <strong>Node table</strong>
+          <span>Paper metadata and categories</span>
+        </a>
+        <a class="format" href="data/edges.csv" download>
+          <span class="format-tag">CSV</span>
+          <strong>Edge table</strong>
+          <span>Source, target, and relation</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section contrast">
+      <div class="shell split">
+        <div>
+          <p class="eyebrow">Scope</p>
+          <h2>Built for inspection, not inflated coverage.</h2>
+        </div>
+        <div class="scope-list">
+          <p><span>1,204</span> Graph and geometric deep learning</p>
+          <p><span>405</span> Geometric, manifold, and topological methods</p>
+          <p><span>4,161</span> Classical graph analysis</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell footer">
+    <p>Machine-screened research catalog. See the repository for methodology and limitations.</p>
+    <a href="https://github.com/0xMRK95/fmri-graph-library/blob/main/docs/DATA_DICTIONARY.md">Data dictionary</a>
+  </footer>
+</body>
+</html>

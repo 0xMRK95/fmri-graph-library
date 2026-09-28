@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Search the fMRI Graph Library paper catalog.">
+  <title>Paper catalog · fMRI Graph Library</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="nav shell">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">ƒ</span><span>fMRI Graph Library</span></a>
+    <nav aria-label="Primary navigation"><a aria-current="page" href="catalog.html">Catalog</a><a href="index.html#graph">Graph</a><a href="https://github.com/0xMRK95/fmri-graph-library">GitHub</a></nav>
+  </header>
+
+  <main class="catalog-main shell">
+    <p class="eyebrow">Paper catalog</p>
+    <h1>Search 5,770 papers.</h1>
+    <p class="catalog-intro">Filter by title, venue, identifier, year, or method family. Select a title to open its most stable source link.</p>
+    <div class="search-panel">
+      <label for="query">Search catalog</label>
+      <input id="query" type="search" placeholder="e.g. dynamic connectivity, transformer, 2024…" autocomplete="off">
+      <div class="filters">
+        <select id="category" aria-label="Filter by category">
+          <option value="">All method families</option>
+          <option value="fmri_gnn">Graph and geometric deep learning</option>
+          <option value="fmri_geometric_manifold">Geometric, manifold, and topological</option>
+          <option value="fmri_graph_classical">Classical graph analysis</option>
+        </select>
+        <select id="year" aria-label="Filter by year"><option value="">All years</option></select>
+      </div>
+    </div>
+    <div class="results-meta"><span id="result-count" aria-live="polite">Loading catalog…</span><span id="page-status"></span></div>
+    <div id="results" class="results" aria-live="polite"></div>
+    <div class="pagination">
+      <button id="previous" type="button">Previous</button>
+      <button id="next" type="button">Next</button>
+    </div>
+  </main>
+  <script src="catalog.js"></script>
+</body>
+</html>

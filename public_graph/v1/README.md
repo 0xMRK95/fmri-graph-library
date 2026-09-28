@@ -21,6 +21,7 @@ retained as isolated nodes.
 - `nodes.csv`: one row per catalog paper with bibliographic identifiers and method category.
 - `edges.csv`: directed `source cites target` relationships within the catalog.
 - `network.graphml`: the same graph for Gephi, Cytoscape, and NetworkX.
+- `network.cx`: an NDEx-compatible CX export (built with `scripts/build_ndex_cx.py`).
 - `stats.json`: machine-readable scope and validation statistics.
 - `SHA256SUMS`: integrity hashes for the release files.
 

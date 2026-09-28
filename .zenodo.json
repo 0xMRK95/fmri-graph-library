@@ -1,0 +1,20 @@
+{
+  "title": "fMRI Graph Library: a literature catalog and citation network",
+  "upload_type": "dataset",
+  "description": "A machine-screened catalog of graph, geometric, manifold and topological methods in functional MRI, with a catalog-induced directed citation graph. Version 1 contains exactly the papers listed in the public catalog.",
+  "creators": [
+    {
+      "name": "Karimi, Mohammadreza",
+      "orcid": "0009-0001-3884-946X"
+    }
+  ],
+  "keywords": [
+    "functional MRI",
+    "graph learning",
+    "brain networks",
+    "citation network",
+    "scientific literature"
+  ],
+  "access_right": "open",
+  "version": "1.0.0"
+}

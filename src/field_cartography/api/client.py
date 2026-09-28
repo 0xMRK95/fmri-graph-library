@@ -1,10 +1,10 @@
 """field_cartography.api.Client — read-only, in-memory query layer.
 
-See src/field_cartography/api/README.md for the contract, latency targets,
-stale-data caveats, and deviations from the v31 spec.
+See src/field_cartography/api/README.md for the public contract and data
+requirements.
 
 Design:
-  * Pure sync. v31 wraps calls in asyncio.to_thread (CPU-bound dict lookups).
+  * Pure sync; async callers can wrap calls in asyncio.to_thread.
   * Lazy per-index load; cached in memory; warm() to preload.
   * Never raises on missing data (returns None / []). Raises ValueError only
     on malformed input.
@@ -31,8 +31,6 @@ from .reducer import (
 )
 
 log = logging.getLogger("field_cartography.api")
-
-_DEFAULT_CORPUS_ROOT = Path("/root/Workspace/PhD/cartography/corpus")
 
 # Index names accepted by warm().
 INDEX_NAMES = (
@@ -109,11 +107,8 @@ class Client:
             data_root = Path(__file__).resolve().parents[3] / "data"
         self.data_root = Path(data_root)
         if corpus_root is None:
-            corpus_root = _DEFAULT_CORPUS_ROOT
-            if not corpus_root.exists():
-                alt = self.data_root.parent.parent / "corpus"
-                if alt.exists():
-                    corpus_root = alt
+            configured = os.getenv("FIELD_CARTOGRAPHY_CORPUS_ROOT")
+            corpus_root = Path(configured) if configured else self.data_root.parent / "corpus"
         self.corpus_root = Path(corpus_root)
         self.slim = slim
 

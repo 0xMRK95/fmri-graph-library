@@ -15,6 +15,5 @@ from .reducer import REDUCER_SPEC
 
 __all__ = ["Client", "PaperRecord", "ExternalIds", "REDUCER_SPEC", "__version__"]
 
-# semver — v31 records this on every transcript. Bump major only on
-# signature removal/rename; add methods freely at minor.
+# Semantic version for the stable query interface.
 __version__ = "1.0.0"

@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this catalog or citation graph, please cite this dataset."
+title: "fMRI Graph Library"
+type: dataset
+version: 1.0.0
+date-released: 2026-09-28
+authors:
+  - family-names: Karimi
+    given-names: Mohammadreza
+    orcid: "https://orcid.org/0009-0001-3884-946X"
+repository-code: "https://github.com/0xMRK95/fmri-graph-library"
+url: "https://0xmrk95.github.io/fmri-graph-library/"
+keywords:
+  - functional MRI
+  - graph learning
+  - brain networks
+  - citation network
+  - scientific literature

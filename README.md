@@ -3,6 +3,8 @@
 A searchable literature corpus and citation-network toolkit for graph and
 geometric learning in functional MRI.
 
+**Project website:** https://0xmrk95.github.io/fmri-graph-library/
+
 ## Paper catalog
 
 **[Browse the current paper catalog](public_catalog/README.md)**
@@ -35,6 +37,7 @@ as the paper library.
 - `scripts/build_public_catalog.py` — regenerates the public catalog from a
   private local warehouse.
 - `scripts/build_public_graph.py` — regenerates the catalog-induced graph.
+- `scripts/build_ndex_cx.py` — creates the NDEx-compatible CX release file.
 - `tests/` — automated tests for the reusable code.
 - `docs/` — methodology, workflow, and publication-boundary documentation.
 
@@ -69,7 +72,8 @@ uv run python scripts/build_public_catalog.py \
 
 See [the methodology](docs/METHODOLOGY.md), [the reproducible
 workflow](docs/WORKFLOW.md), and [the publication
-boundary](docs/PUBLICATION_BOUNDARY.md) for details.
+boundary](docs/PUBLICATION_BOUNDARY.md) for details. Field definitions are in
+the [data dictionary](docs/DATA_DICTIONARY.md).
 
 ## Regenerate the public graph
 
@@ -83,3 +87,10 @@ uv run python scripts/build_public_graph.py \
   --output-dir public_graph/v1 \
   --version v1
 ```
+
+## Explore and reuse
+
+- Browse all papers in the [public catalog](public_catalog/README.md).
+- Download the catalog-only graph from [public graph v1](public_graph/v1/README.md).
+- Open the public GraphML file in Gephi Lite from the project website.
+- Create the NDEx upload file with `uv run --extra ndex python scripts/build_ndex_cx.py`.

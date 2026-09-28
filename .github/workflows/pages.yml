@@ -1,0 +1,45 @@
+name: Deploy project website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "public_graph/v1/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/configure-pages@v5
+      - name: Prepare static site
+        run: |
+          mkdir -p _site/data
+          cp -R site/. _site/
+          cp public_graph/v1/nodes.csv _site/data/
+          cp public_graph/v1/edges.csv _site/data/
+          cp public_graph/v1/network.graphml _site/data/
+          cp public_graph/v1/network.cx _site/data/
+          cp public_graph/v1/stats.json _site/data/
+          cp public_graph/v1/SHA256SUMS _site/data/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

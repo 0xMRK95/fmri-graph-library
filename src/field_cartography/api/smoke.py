@@ -4,7 +4,7 @@
 
 Constructs a Client, exercises every public method once, prints PASS/FAIL
 per method, and exits non-zero if any method errors or returns an obviously
-broken result. v31 runs this before allow-listing the cartography tools.
+broken result.
 
 It auto-discovers a known-good canonical id (a confirmed fmri_gnn paper with
 full text) unless one is passed on the command line.

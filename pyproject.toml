@@ -19,6 +19,7 @@ fc = "field_cartography.cli:app"
 
 [project.optional-dependencies]
 neo4j = ["neo4j>=5.0"]
+ndex = ["ndex2>=3.12"]
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]

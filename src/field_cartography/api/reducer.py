@@ -2,8 +2,8 @@
 is this paper'.
 
 `classifications_7cat.jsonl` is an APPEND LOG, not a table: a paper can have
-many rows across re-classification waves (Haiku first-pass, Sonnet re-pass,
-Opus tiebreak, administrative prune rows). v31 must NOT count raw lines.
+many rows across re-classification waves (first pass, review pass,
+tiebreak, and administrative prune rows). Consumers must not count raw lines.
 
 This module encodes the reduction so callers never reimplement it. The exact
 rule is also returned by `Client.reducer_spec()` for transcript logging.
