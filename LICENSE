@@ -1,0 +1,13 @@
+# Licensing
+
+This repository uses separate licenses for software and research data:
+
+- Source code, scripts, and software configuration are licensed under the MIT
+  License. See `LICENSE-CODE`.
+- The generated paper catalog, citation-network data, documentation, and other
+  original dataset contributions are licensed under the Creative Commons
+  Attribution 4.0 International License (CC BY 4.0). See `LICENSE-DATA`.
+
+Bibliographic metadata can originate from third-party scholarly indexes and
+remains subject to applicable source terms and rights. This repository does not
+redistribute article full text.

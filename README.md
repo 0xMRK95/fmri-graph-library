@@ -94,3 +94,9 @@ uv run python scripts/build_public_graph.py \
 - Download the catalog-only graph from [public graph v1](public_graph/v1/README.md).
 - Open the public GraphML file in Gephi Lite from the project website.
 - Create the NDEx upload file with `uv run --extra ndex python scripts/build_ndex_cx.py`.
+
+## License
+
+Code is available under the [MIT License](LICENSE-CODE). The generated catalog,
+graph data, and documentation are available under
+[CC BY 4.0](LICENSE-DATA). See [LICENSE](LICENSE) for scope details.

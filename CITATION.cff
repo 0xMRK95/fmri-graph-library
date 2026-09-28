@@ -4,6 +4,7 @@ title: "fMRI Graph Library"
 type: dataset
 version: 1.0.0
 date-released: 2026-09-28
+license: CC-BY-4.0
 authors:
   - family-names: Karimi
     given-names: Mohammadreza
