@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import math
 import random
@@ -75,6 +76,37 @@ def _layout(graph: nx.DiGraph, seed: int) -> dict[str, tuple[float, float]]:
     return positions
 
 
+def _timeline_layout(graph: nx.DiGraph) -> dict[str, tuple[float, float]]:
+    """Arrange every paper by publication year inside a method-family lane."""
+    lane_centers = {
+        "fmri_gnn": 620.0,
+        "fmri_geometric_manifold": 0.0,
+        "fmri_graph_classical": -620.0,
+    }
+    groups: dict[tuple[str, int], list[str]] = {}
+    for node_id, attributes in graph.nodes(data=True):
+        category = attributes.get("category", "fmri_graph_classical")
+        year = int(attributes.get("year") or 2002)
+        groups.setdefault((category, year), []).append(node_id)
+
+    positions: dict[str, tuple[float, float]] = {}
+    for (category, year), node_ids in groups.items():
+        ordered = sorted(node_ids)
+        center = lane_centers.get(category, 0.0)
+        count = len(ordered)
+        for index, node_id in enumerate(ordered):
+            digest = hashlib.sha1(node_id.encode("utf-8")).digest()
+            jitter_x = (int.from_bytes(digest[:2], "big") / 65535 - 0.5) * 48
+            jitter_y = (int.from_bytes(digest[2:4], "big") / 65535 - 0.5) * 7
+            year_x = -960 + ((max(2002, min(year, 2026)) - 2002) / 24) * 1920
+            if count == 1:
+                lane_y = center
+            else:
+                lane_y = center - 235 + (index / (count - 1)) * 470
+            positions[node_id] = (year_x + jitter_x, lane_y + jitter_y)
+    return positions
+
+
 def build_gexf(
     nodes_path: Path,
     edges_path: Path,
@@ -86,6 +118,7 @@ def build_gexf(
     """Write a deterministic, styled GEXF intended for immediate web exploration."""
     graph = _read_graph(nodes_path, edges_path)
     positions = _layout(graph, seed)
+    timeline_positions = _timeline_layout(graph)
     degrees = dict(graph.degree())
     max_degree = max(degrees.values(), default=1)
     denominator = math.log1p(max_degree) or 1
@@ -130,10 +163,14 @@ def build_gexf(
                         if key != "viz"
                     }
                     | {
-                        "x": float(positions[node_id][0]),
-                        "y": float(positions[node_id][1]),
-                        "size": 1.8
-                        + 7.2
+                        "x": float(timeline_positions[node_id][0]),
+                        "y": float(timeline_positions[node_id][1]),
+                        "network_x": float(positions[node_id][0]),
+                        "network_y": float(positions[node_id][1]),
+                        "timeline_x": float(timeline_positions[node_id][0]),
+                        "timeline_y": float(timeline_positions[node_id][1]),
+                        "size": 1.4
+                        + 5.6
                         * math.sqrt(math.log1p(degrees[node_id]) / denominator),
                         "color": CATEGORY_HEX.get(
                             attributes.get("category"), "#788280"
