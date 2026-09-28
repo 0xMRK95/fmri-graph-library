@@ -1,0 +1,57 @@
+project: field-cartography
+api:
+  semantic_scholar:
+    base_url: "https://api.semanticscholar.org/graph/v1"
+    rate_limit_per_min: 15
+  openalex:
+    base_url: "https://api.openalex.org"
+    rate_limit_per_min: 60
+  crossref:
+    base_url: "https://api.crossref.org"
+    rate_limit_per_min: 50
+storage:
+  data_dir: "data"
+  graph_dir: "graph"
+  duckdb_path: "db/duckdb/field_cartography.duckdb"
+  cache_dir: "data/cache"
+expansion:
+  default_depth: 1
+  default_limit_per_paper: 50
+  default_global_limit: 1000
+provenance:
+  confidence_default: 0.7
+relevance:
+  min_score: 2
+  include_terms:
+    - fmri
+    - functional connectivity
+    - functional connectome
+    - connectome
+    - resting state
+    - resting-state
+    - brain network
+    - network neuroscience
+    - neuroimaging
+    - brain
+    - gnn
+    - graph neural
+    - graph convolution
+    - geometric deep learning
+    - topology
+    - topological
+    - dynamic functional connectivity
+    - dynamic connectivity
+    - connectomics
+    - graph learning
+  exclude_terms:
+    - cancer
+    - pneumonia
+    - laryngeal
+    - retina
+    - vitreo
+    - political
+    - privacy
+    - transfer learning
+    - object recognition
+    - traveling salesman
+    - country

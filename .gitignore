@@ -1,0 +1,42 @@
+# Python runtime
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# macOS metadata
+._*
+.DS_Store
+
+# Private research warehouse and generated artifacts
+data/
+db/
+graph/
+downloads/
+.fc_cache/
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS / Jupyter / pytest
+Thumbs.db
+.ipynb_checkpoints/
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Secrets
+.env
+.env.local
+*.sqlite
+*.sqlite3
+*.duckdb
