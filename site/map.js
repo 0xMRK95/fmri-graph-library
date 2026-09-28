@@ -105,7 +105,7 @@ function switchLayout(layout) {
   renderer.getCamera().animatedReset({ duration: 650 });
 }
 
-fetch("data/network.json")
+fetch("data/network.json?view=timeline-v1")
   .then((response) => {
     if (!response.ok) throw new Error(`Network request failed: ${response.status}`);
     return response.json();
