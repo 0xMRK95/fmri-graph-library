@@ -1,4 +1,5 @@
 import csv
+import json
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -35,4 +36,16 @@ def test_gexf_has_positions_colors_and_sizes(tmp_path: Path) -> None:
     assert len(root.findall(".//viz:position", namespace)) == 3
     assert len(root.findall(".//viz:color", namespace)) == 4
     assert len(root.findall(".//viz:size", namespace)) == 3
-    assert '"color":"#119489"' in json_output.read_text(encoding="utf-8")
+    exported = json.loads(json_output.read_text(encoding="utf-8"))
+    assert exported["nodes"][0]["attributes"]["color"] == "#119489"
+    for node in exported["nodes"]:
+        assert {
+            "timeline_x",
+            "timeline_y",
+            "atlas_x",
+            "atlas_y",
+            "impact_x",
+            "impact_y",
+            "network_x",
+            "network_y",
+        } <= node["attributes"].keys()

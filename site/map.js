@@ -18,6 +18,13 @@ const categoryNames = {
   fmri_graph_classical: "Classical graph analysis",
 };
 
+const viewDescriptions = {
+  timeline: "<strong>Timeline:</strong> left = older (2002); right = newer (2026). Rows separate method families.",
+  atlas: "<strong>Method atlas</strong> packs each family into a constellation, with influential papers near its center.",
+  impact: "<strong>Year × citations:</strong> newer papers are farther right; globally cited papers are higher.",
+  network: "<strong>Citation network</strong> reveals the structural neighborhoods formed by internal citations.",
+};
+
 let graph;
 let renderer;
 let activeNode = null;
@@ -100,12 +107,17 @@ function switchLayout(layout) {
   document.querySelectorAll("[data-layout]").forEach((button) => {
     button.classList.toggle("active", button.dataset.layout === layout);
   });
-  document.querySelector("#timeline-cue").classList.toggle("hidden", layout !== "timeline");
+  document.querySelector("#timeline-cue").classList.toggle("hidden", !["timeline", "impact"].includes(layout));
+  document.querySelector("#impact-cue").classList.toggle("hidden", layout !== "impact");
+  document.querySelector("#view-description").innerHTML = viewDescriptions[layout];
+  const url = new URL(window.location);
+  url.searchParams.set("view", layout);
+  window.history.replaceState({}, "", url);
   renderer.refresh();
   renderer.getCamera().animatedReset({ duration: 650 });
 }
 
-fetch("data/network.json?view=timeline-v1")
+fetch("data/network.json?view=views-v2")
   .then((response) => {
     if (!response.ok) throw new Error(`Network request failed: ${response.status}`);
     return response.json();
@@ -159,6 +171,11 @@ fetch("data/network.json?view=timeline-v1")
       hoveredNode = null;
       renderer.refresh();
     });
+    const requestedView = new URLSearchParams(window.location.search).get("view");
+    if (["timeline", "atlas", "impact", "network"].includes(requestedView)
+      && requestedView !== "timeline") {
+      switchLayout(requestedView);
+    }
     loading.classList.add("done");
   })
   .catch((error) => {

@@ -107,6 +107,50 @@ def _timeline_layout(graph: nx.DiGraph) -> dict[str, tuple[float, float]]:
     return positions
 
 
+def _atlas_layout(graph: nx.DiGraph) -> dict[str, tuple[float, float]]:
+    """Pack each method family into a distinct, degree-ranked constellation."""
+    centers = {
+        "fmri_graph_classical": (-430.0, 0.0),
+        "fmri_gnn": (610.0, 350.0),
+        "fmri_geometric_manifold": (620.0, -470.0),
+    }
+    groups: dict[str, list[str]] = {}
+    for node_id, attributes in graph.nodes(data=True):
+        groups.setdefault(attributes.get("category", "fmri_graph_classical"), []).append(node_id)
+
+    golden_angle = math.pi * (3 - math.sqrt(5))
+    positions: dict[str, tuple[float, float]] = {}
+    for category, node_ids in groups.items():
+        center_x, center_y = centers.get(category, (0.0, 0.0))
+        ordered = sorted(node_ids, key=lambda node_id: (-graph.degree(node_id), node_id))
+        spacing = 7.6
+        for index, node_id in enumerate(ordered):
+            radius = spacing * math.sqrt(index)
+            angle = index * golden_angle
+            positions[node_id] = (
+                center_x + radius * math.cos(angle),
+                center_y + radius * math.sin(angle),
+            )
+    return positions
+
+
+def _impact_layout(graph: nx.DiGraph) -> dict[str, tuple[float, float]]:
+    """Place papers by publication year and global citation count on a log scale."""
+    citation_counts = [int(attributes.get("citation_count") or 0) for _, attributes in graph.nodes(data=True)]
+    denominator = math.log1p(max(citation_counts, default=1)) or 1
+    positions: dict[str, tuple[float, float]] = {}
+    for node_id, attributes in graph.nodes(data=True):
+        year = int(attributes.get("year") or 2002)
+        citation_count = int(attributes.get("citation_count") or 0)
+        digest = hashlib.sha1(node_id.encode("utf-8")).digest()
+        jitter_x = (int.from_bytes(digest[:2], "big") / 65535 - 0.5) * 42
+        jitter_y = (int.from_bytes(digest[2:4], "big") / 65535 - 0.5) * 15
+        year_x = -960 + ((max(2002, min(year, 2026)) - 2002) / 24) * 1920
+        impact_y = -690 + (math.log1p(citation_count) / denominator) * 1380
+        positions[node_id] = (year_x + jitter_x, impact_y + jitter_y)
+    return positions
+
+
 def build_gexf(
     nodes_path: Path,
     edges_path: Path,
@@ -119,6 +163,8 @@ def build_gexf(
     graph = _read_graph(nodes_path, edges_path)
     positions = _layout(graph, seed)
     timeline_positions = _timeline_layout(graph)
+    atlas_positions = _atlas_layout(graph)
+    impact_positions = _impact_layout(graph)
     degrees = dict(graph.degree())
     max_degree = max(degrees.values(), default=1)
     denominator = math.log1p(max_degree) or 1
@@ -169,6 +215,10 @@ def build_gexf(
                         "network_y": float(positions[node_id][1]),
                         "timeline_x": float(timeline_positions[node_id][0]),
                         "timeline_y": float(timeline_positions[node_id][1]),
+                        "atlas_x": float(atlas_positions[node_id][0]),
+                        "atlas_y": float(atlas_positions[node_id][1]),
+                        "impact_x": float(impact_positions[node_id][0]),
+                        "impact_y": float(impact_positions[node_id][1]),
                         "size": 1.4
                         + 5.6
                         * math.sqrt(math.log1p(degrees[node_id]) / denominator),

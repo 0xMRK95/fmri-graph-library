@@ -25,7 +25,9 @@
         <legend>View</legend>
         <div class="view-switch" role="group" aria-label="Map layout">
           <button type="button" data-layout="timeline" class="active">Timeline</button>
-          <button type="button" data-layout="network">Citation structure</button>
+          <button type="button" data-layout="atlas">Method atlas</button>
+          <button type="button" data-layout="impact">Year × citations</button>
+          <button type="button" data-layout="network">Citation network</button>
         </div>
       </fieldset>
 
@@ -37,8 +39,8 @@
       </fieldset>
 
       <div class="map-explainer">
+        <p id="view-description"><strong>Timeline:</strong> left = older (2002); right = newer (2026). Rows separate method families.</p>
         <p><strong>Node size</strong> reflects internal citation degree.</p>
-        <p><strong>Timeline</strong> runs from older papers on the left to recent papers on the right.</p>
         <p><strong>Links</strong> appear when you select a paper, keeping the overview readable.</p>
         <label class="edge-toggle"><input id="show-edges" type="checkbox"> Show all citation links</label>
       </div>
@@ -46,7 +48,8 @@
     </aside>
 
     <div id="sigma-container" aria-label="Interactive paper citation network"></div>
-    <div id="timeline-cue" class="timeline-cue"><span>2002</span><strong>Publication year</strong><span>2026</span></div>
+    <div id="timeline-cue" class="timeline-cue"><span>Older papers · 2002</span><strong>Publication year <b>→</b></strong><span>Newer papers · 2026</span></div>
+    <div id="impact-cue" class="impact-cue hidden"><span>Higher global citation count</span><b>↑</b></div>
     <div id="map-loading" class="map-loading"><span></span><p>Loading 5,770 papers…</p></div>
 
     <article id="paper-card" class="paper-card" hidden>
@@ -59,6 +62,6 @@
     </article>
   </main>
 
-  <script type="module" src="map.js?v=timeline-v1"></script>
+  <script type="module" src="map.js?v=views-v2"></script>
 </body>
 </html>
