@@ -35,6 +35,7 @@ jobs:
           cp public_graph/v1/edges.csv _site/data/
           cp public_graph/v1/network.graphml _site/data/
           cp public_graph/v1/network.gexf _site/data/
+          cp public_graph/v1/network.json _site/data/
           cp public_graph/v1/network.cx _site/data/
           cp public_graph/v1/stats.json _site/data/
           cp public_graph/v1/SHA256SUMS _site/data/

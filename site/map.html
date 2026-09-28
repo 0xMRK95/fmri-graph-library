@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive citation map for the fMRI Graph Library.">
+  <title>Interactive map · fMRI Graph Library</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="map.css">
+</head>
+<body class="map-page">
+  <header class="map-nav">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">ƒ</span><span>fMRI Graph Library</span></a>
+    <div class="map-nav-meta"><strong>Interactive citation map</strong><span>5,770 papers · 36,739 citations</span></div>
+    <a class="map-close" href="index.html" aria-label="Close map">×</a>
+  </header>
+
+  <main class="map-workspace">
+    <aside class="map-panel">
+      <label for="map-search">Find a paper</label>
+      <input id="map-search" type="search" placeholder="Search title, venue, or year…" autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+
+      <fieldset>
+        <legend>Method families</legend>
+        <label class="legend-row"><input type="checkbox" value="fmri_gnn" checked><span class="swatch teal"></span><span>Graph & geometric deep learning</span><strong>1,204</strong></label>
+        <label class="legend-row"><input type="checkbox" value="fmri_geometric_manifold" checked><span class="swatch amber"></span><span>Geometric / manifold / topological</span><strong>405</strong></label>
+        <label class="legend-row"><input type="checkbox" value="fmri_graph_classical" checked><span class="swatch blue"></span><span>Classical graph analysis</span><strong>4,161</strong></label>
+      </fieldset>
+
+      <div class="map-explainer">
+        <p><strong>Node size</strong> reflects internal citation degree.</p>
+        <p><strong>Links</strong> are directed citations between catalog papers.</p>
+        <p>The outer ring contains papers with no citation to another catalog paper.</p>
+      </div>
+      <button id="reset-map" class="map-button" type="button">Reset view</button>
+    </aside>
+
+    <div id="sigma-container" aria-label="Interactive paper citation network"></div>
+    <div id="map-loading" class="map-loading"><span></span><p>Loading 5,770 papers…</p></div>
+
+    <article id="paper-card" class="paper-card" hidden>
+      <button id="close-card" aria-label="Close paper details">×</button>
+      <p id="paper-category" class="paper-category"></p>
+      <h2 id="paper-title"></h2>
+      <p id="paper-meta"></p>
+      <div id="paper-degree" class="paper-degree"></div>
+      <a id="paper-link" target="_blank" rel="noreferrer">Open source ↗</a>
+    </article>
+  </main>
+
+  <script type="module" src="map.js"></script>
+</body>
+</html>

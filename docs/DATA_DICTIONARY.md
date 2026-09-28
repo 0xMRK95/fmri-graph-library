@@ -39,6 +39,7 @@ introduced by identifier reconciliation are removed.
   Cytoscape, and NetworkX.
 - `network.gexf` is the presentation-ready view: it adds a deterministic layout,
   method-family colors, degree-scaled node sizes, and subdued edge styling.
+- `network.json` supplies the same styled view to the interactive project map.
 - `network.cx` contains the same graph in NDEx CX format.
 - `stats.json` records release counts, component statistics, scope, and build
   timestamp.

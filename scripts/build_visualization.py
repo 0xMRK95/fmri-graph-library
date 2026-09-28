@@ -18,6 +18,7 @@ def main() -> None:
         args.release_dir / "nodes.csv",
         args.release_dir / "edges.csv",
         args.release_dir / "network.gexf",
+        json_path=args.release_dir / "network.json",
         seed=args.seed,
     )
     print(json.dumps(stats, indent=2))

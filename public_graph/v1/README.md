@@ -22,6 +22,7 @@ retained as isolated nodes.
 - `edges.csv`: directed `source cites target` relationships within the catalog.
 - `network.graphml`: the same graph for Gephi, Cytoscape, and NetworkX.
 - `network.gexf`: a styled, pre-positioned view for Gephi and Gephi Lite.
+- `network.json`: the styled graph consumed by the project web viewer.
 - `network.cx`: an NDEx-compatible CX export (built with `scripts/build_ndex_cx.py`).
 - `stats.json`: machine-readable scope and validation statistics.
 - `SHA256SUMS`: integrity hashes for the release files.

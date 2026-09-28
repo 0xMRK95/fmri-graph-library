@@ -78,6 +78,7 @@ def update_checksums(release_dir: Path) -> None:
         "edges.csv",
         "network.graphml",
         "network.gexf",
+        "network.json",
         "network.cx",
         "stats.json",
         "README.md",

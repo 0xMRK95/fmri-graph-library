@@ -23,7 +23,8 @@ def test_gexf_has_positions_colors_and_sizes(tmp_path: Path) -> None:
         writer.writerow(["a", "b", "cites"])
 
     output = tmp_path / "network.gexf"
-    stats = build_gexf(nodes, edges, output)
+    json_output = tmp_path / "network.json"
+    stats = build_gexf(nodes, edges, output, json_path=json_output)
     root = ET.parse(output).getroot()
     namespace = {
         "g": "http://www.gexf.net/1.2draft",
@@ -34,3 +35,4 @@ def test_gexf_has_positions_colors_and_sizes(tmp_path: Path) -> None:
     assert len(root.findall(".//viz:position", namespace)) == 3
     assert len(root.findall(".//viz:color", namespace)) == 4
     assert len(root.findall(".//viz:size", namespace)) == 3
+    assert '"color":"#119489"' in json_output.read_text(encoding="utf-8")

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import math
 import random
 from pathlib import Path
@@ -14,6 +15,12 @@ CATEGORY_COLORS = {
     "fmri_gnn": {"r": 17, "g": 148, "b": 137, "a": 0.92},
     "fmri_geometric_manifold": {"r": 218, "g": 145, "b": 55, "a": 0.92},
     "fmri_graph_classical": {"r": 73, "g": 103, "b": 161, "a": 0.88},
+}
+
+CATEGORY_HEX = {
+    "fmri_gnn": "#119489",
+    "fmri_geometric_manifold": "#da9137",
+    "fmri_graph_classical": "#4967a1",
 }
 
 
@@ -73,6 +80,7 @@ def build_gexf(
     edges_path: Path,
     output_path: Path,
     *,
+    json_path: Path | None = None,
     seed: int = 42,
 ) -> dict[str, int]:
     """Write a deterministic, styled GEXF intended for immediate web exploration."""
@@ -107,6 +115,51 @@ def build_gexf(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     nx.write_gexf(graph, output_path, version="1.2draft", prettyprint=False)
+    if json_path is not None:
+        export = {
+            "attributes": {
+                "name": "fMRI Graph Library — catalog citation map v1",
+                "type": "directed",
+            },
+            "nodes": [
+                {
+                    "key": node_id,
+                    "attributes": {
+                        key: value
+                        for key, value in attributes.items()
+                        if key != "viz"
+                    }
+                    | {
+                        "x": float(positions[node_id][0]),
+                        "y": float(positions[node_id][1]),
+                        "size": 1.8
+                        + 7.2
+                        * math.sqrt(math.log1p(degrees[node_id]) / denominator),
+                        "color": CATEGORY_HEX.get(
+                            attributes.get("category"), "#788280"
+                        ),
+                    },
+                }
+                for node_id, attributes in graph.nodes(data=True)
+            ],
+            "edges": [
+                {
+                    "key": f"e{index}",
+                    "source": source,
+                    "target": target,
+                    "attributes": {
+                        "relation": "cites",
+                        "size": 0.18,
+                        "color": "rgba(80, 99, 95, 0.10)",
+                    },
+                }
+                for index, (source, target) in enumerate(graph.edges)
+            ],
+        }
+        json_path.write_text(
+            json.dumps(export, ensure_ascii=False, separators=(",", ":")),
+            encoding="utf-8",
+        )
     return {
         "nodes": graph.number_of_nodes(),
         "edges": graph.number_of_edges(),
